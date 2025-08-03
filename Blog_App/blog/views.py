@@ -1,13 +1,15 @@
 
 from django.shortcuts import render,get_object_or_404
 from django.http import HttpResponse
+from django.urls import reverse
 from django.views.generic import (ListView,
                                   DetailView,
                                   CreateView,
                                   UpdateView,
                                   DeleteView
                                   )
-from .models import Post
+from .models import Post,Comment
+from .forms import CommentForm
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 
@@ -36,7 +38,14 @@ class UserPostListView(ListView):
         return Post.objects.filter(author=user).order_by('-date_post')
 
 class PostDetailView(DetailView):
-    model=Post
+    model = Post
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = Comment.objects.filter(post=self.object).order_by('-date_post')
+        context['form'] = CommentForm()
+        return context
+
 #Create Post
 class PostCreateView(LoginRequiredMixin,CreateView):
     model=Post
@@ -71,6 +80,19 @@ class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
             return True
         return False
     
+# Create Comment
+class PostComment(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+
+    def form_valid(self, form):
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        form.instance.user = self.request.user
+        form.instance.post = post
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('post-detail', kwargs={'pk': self.kwargs['pk']})
 
 def about(request):
     return render(request,'blog/about.html')

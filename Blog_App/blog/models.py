@@ -16,6 +16,18 @@ class Post(models.Model):
     def __str__(self):
         return self.title
     
+class Comment(models.Model):
+    __tablename__='comment_table'
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,)
+    comment = models.TextField()
+    date_post = models.DateTimeField(default=timezone.now)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+
+    def __str__(self):
+        return f'Comment by {self.author.username}'
+    
     #get url
     def get_absolute_url(self):
         return reverse("post-detail", kwargs={"pk": self.pk})

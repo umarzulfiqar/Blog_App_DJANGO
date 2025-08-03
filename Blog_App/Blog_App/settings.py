@@ -140,5 +140,10 @@ LOGIN_REDIRECT_URL = 'blog-home'
 LOGIN_URL='login'
 
 ALLOWED_HOSTS=['192.168.100.68',
-               '127.0.0.1'
+               '127.0.0.1',
+               '9d4bd0490d5c.ngrok-free.app'
                ]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://9d4bd0490d5c.ngrok-free.app",
+]
