@@ -1,0 +1,7 @@
+Django
+django-crispy-forms
+crispy_bootstrap5
+idna
+Pillow
+dotenv
+psycopg

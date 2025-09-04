@@ -12,6 +12,10 @@ class Post(models.Model):
     content= models.TextField()
     date_post= models.DateTimeField(default=timezone.now)
     author=models.ForeignKey(User,on_delete=models.CASCADE)  #Foregin Key if with user is deleted it's blog/post also delete
+    
+    def get_absolute_url(self):
+        return reverse('blog-home')
+
 
     def __str__(self):
         return self.title
